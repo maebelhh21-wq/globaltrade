@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Document Manager — GlobalTrade</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <header class="page-header">
+      <a href="index.html" class="back-link">← Back to Home</a>
+      <h1>📄 Document Manager</h1>
+    </header>
+
+    <main>
+      <div class="upload-section">
+        <select id="docType">
+          <option value="">-- Select Document Type --</option>
+          <option value="commercial_invoice">Commercial Invoice</option>
+          <option value="packing_list">Packing List</option>
+          <option value="bill_of_lading">Bill of Lading (B/L)</option>
+          <option value="certificate_of_origin">Certificate of Origin</option>
+          <option value="import_export_license">Import/Export License</option>
+          <option value="customs_declaration">Customs Declaration</option>
+        </select>
+        <input type="file" id="fileInput" accept=".pdf,.doc,.docx,.xlsx,.xls,.txt" />
+        <button id="uploadBtn">Upload</button>
+        <div id="uploadStatus"></div>
+      </div>
+
+      <div class="templates-section">
+        <h3>🖨️ Auto-Generate Templates</h3>
+        <div class="template-buttons">
+          <button class="template-btn" data-type="commercial_invoice">Generate Commercial Invoice</button>
+          <button class="template-btn" data-type="packing_list">Generate Packing List</button>
+          <button class="template-btn" data-type="bill_of_lading">Generate Bill of Lading</button>
+          <button class="template-btn" data-type="certificate_of_origin">Generate Certificate of Origin</button>
+        </div>
+      </div>
+
+      <div class="documents-section">
+        <h3>📂 My Uploaded Documents</h3>
+        <div id="documentsList">
+          <p>No documents uploaded yet.</p>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

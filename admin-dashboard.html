@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - TradeConnect</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+        }
+        
+        header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .logout-btn {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .logout-btn:hover {
+            background-color: #c0392b;
+        }
+        
+        .sidebar {
+            width: 250px;
+            background-color: #34495e;
+            height: calc(100vh - 70px);
+            position: fixed;
+            top: 70px;
+            left: 0;
+            padding: 1.5rem 0;
+            overflow-y: auto;
+        }
+        
+        .sidebar-menu {
+            list-style: none;
+        }
+        
+        .sidebar-menu li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .sidebar-menu a {
+            display: block;
+            color: #ecf0f1;
+            padding: 0.8rem 1.5rem;
+            text-decoration: none;
+            transition: background-color 0.3s;
+            border-left: 4px solid transparent;
+        }
+        
+        .sidebar-menu a:hover, .sidebar-menu a.active {
+            background-color: #2c3e50;
+            border-left: 4px solid #e74c3c;
+        }
+        
+        .main-content {
+            margin-left: 250px;
+            padding: 2rem;
+            min-height: calc(100vh - 70px);
+        }
+        
+        .page-title {
+            font-size: 1.8rem;
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #e74c3c;
+        }
+        
+        /* Dashboard Cards */
+        .dashboard-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .card-title {
+            font-size: 1.2rem;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .card-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #e74c3c;
+        }
+        
+        /* Company Management */
+        .company-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        .company-item {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .company-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .company-name {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .company-status {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        .status-active {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .status-frozen {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .company-info p {
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .info-label {
+            font-weight: bold;
+            color: #7f8c8d;
+        }
+        
+        .company-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .btn-small {
+            padding: 0.4rem 0.8rem;
+            border: none;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+        
+        .btn-edit {
+            background-color: #f39c12;
+            color: white;
+        }
+        
+        .btn-delete {
+            background-color: #e74c3c;
+            color: white;
+        }
+        
+        .btn-activate {
+            background-color: #2ecc71;
+            color: white;
+        }
+        
+        .btn-freeze {
+            background-color: #e74c3c;
+            color: white;
+        }
+        
+        .btn-reset {
+            background-color: #9b59b6;
+            color: white;
+        }
+        
+        /* Add Company Form */
+        .form-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .form-title {
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+            color: #2c3e50;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        
+        .form-actions {
+            margin-top: 1.5rem;
+        }
+        
+        .btn-submit {
+            padding: 0.8rem 1.5rem;
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .btn-submit:hover {
+            background-color: #c0392b;
+        }
+        
+        /* Website Content Management */
+        .content-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .content-editor textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        /* Tab System */
+        .tabs {
+            display: flex;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .tab {
+            padding: 0.8rem 1.5rem;
+            cursor: pointer;
+            background-color: #ecf0f1;
+            border: none;
+            border-radius: 4px 4px 0 0;
+            margin-right: 0.5rem;
+        }
+        
+        .tab.active {
+            background-color: white;
+            border-bottom: 2px solid #e74c3c;
+            font-weight: bold;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Statistics */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #e74c3c;
+            margin: 0.5rem 0;
+        }
+        
+        .stat-label {
+            color: #7f8c8d;
+            font-size: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">TradeConnect Admin</div>
+        <div class="user-info">
+            <span>Administrator</span>
+            <button class="logout-btn" id="logout-btn">Logout</button>
+        </div>
+    </header>
+    
+    <div class="sidebar">
+        <ul class="sidebar-menu">
+            <li><a href="#dashboard" class="active" data-tab="dashboard">Dashboard</a></li>
+            <li><a href="#companies" data-tab="companies">Manage Companies</a></li>
+            <li><a href="#add-company" data-tab="add-company">Add Company</a></li>
+            <li><a href="#website-content" data-tab="website-content">Website Content</a></li>
+            <li><a href="#statistics" data-tab="statistics">Statistics</a></li>
+            <li><a href="#settings" data-tab="settings">Settings</a></li>
+        </ul>
+    </div>
+    
+    <div class="main-content">
+        <h1 class="page-title">Admin Dashboard</h1>
+        
+        <!-- Dashboard Tab -->
+        <div id="dashboard" class="tab-content active">
+            <div class="dashboard-cards">
+                <div class="card">
+                    <div class="card-title">Total Companies</div>
+                    <div class="card-value" id="total-companies">127</div>
+                </div>
+                <div class="card">
+                    <div class="card-title">Active Companies</div>
+                    <div class="card-value" id="active-companies">103</div>
+                </div>
+                <div class="card">
+                    <div class="card-title">Frozen Companies</div>
+                    <div class="card-value" id="frozen-companies">24</div>
+                </div>
+                <div class="card">
+                    <div class="card-title">Total Users</div>
+                    <div class="card-value">389</div>
+                </div>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Documents Processed</div>
+                    <div class="stat-number">2,458</div>
+                    <div class="stat-label">This Month</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Tasks Completed</div>
+                    <div class="stat-number">1,872</div>
+                    <div class="stat-label">This Month</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Revenue</div>
+                    <div class="stat-number">$12,580</div>
+                    <div class="stat-label">This Month</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Support Tickets</div>
+                    <div class="stat-number">47</div>
+                    <div class="stat-label">Open</div>
+                </div>
+            </div>
+            
+            <div class="content-section" style="margin-top: 2rem;">
+                <h3>Recent Activity</h3>
+                <ul style="list-style: none; margin-top: 1rem;">
+                    <li style="padding: 1rem; border-bottom: 1px solid #eee;">Global Exporters Inc. uploaded a new Bill of Lading - Today, 10:30 AM</li>
+                    <li style="padding: 1rem; border-bottom: 1px solid #eee;">Premium Textiles Ltd. added 3 new products to their catalog - Yesterday, 3:45 PM</li>
+                    <li style="padding: 1rem; border-bottom: 1px solid #eee;">AgriTrade Solutions completed their monthly report - Jun 15, 2023</li>
+                    <li style="padding: 1rem; border-bottom: 1px solid #eee;">Industrial Machinery Co. froze their account due to payment delay - Jun 14, 2023</li>
+                    <li style="padding: 1rem;">New company "Oceanic Foods" registered - Jun 12, 2023</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Manage Companies Tab -->
+        <div id="companies" class="tab-content">
+            <h2>Manage Companies</h2>
+            <p>View, edit, and manage all registered companies.</p>
+            
+            <div class="company-grid" id="companies-list">
+                <!-- Companies will be populated here -->
+            </div>
+        </div>
+        
+        <!-- Add Company Tab -->
+        <div id="add-company" class="tab-content">
+            <h2>Add New Company</h2>
+            <p>Create login credentials and initial profile for a new company.</p>
+            
+            <div class="form-container">
+                <h3 class="form-title">Company Information</h3>
+                <form id="add-company-form">
+                    <div class="form-group">
+                        <label for="new-company-name">Company Name</label>
+                        <input type="text" id="new-company-name" placeholder="Enter company name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="new-username">Username</label>
+                        <input type="text" id="new-username" placeholder="Create username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="new-password">Password</label>
+                        <input type="password" id="new-password" placeholder="Create password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="new-contact-person">Contact Person</label>
+                        <input type="text" id="new-contact-person" placeholder="Enter primary contact name">
+                    </div>
+                    <div class="form-group">
+                        <label for="new-email">Email</label>
+                        <input type="email" id="new-email" placeholder="Enter company email">
+                    </div>
+                    <div class="form-group">
+                        <label for="new-phone">Phone</label>
+                        <input type="tel" id="new-phone" placeholder="Enter company phone number">
+                    </div>
+                    <div class="form-group">
+                        <label for="new-status">Initial Status</label>
+                        <select id="new-status">
+                            <option value="active">Active</option>
+                            <option value="frozen">Frozen (Payment Required)</option>
+                        </select>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn-submit">Create Company Account</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Website Content Tab -->
+        <div id="website-content" class="tab-content">
+            <h2>Website Content Management</h2>
+            <p>Edit the public-facing content of the website.</p>
+            
+            <div class="content-section">
+                <h3>About Us Page</h3>
+                <div class="content-editor">
+                    <textarea id="about-content" placeholder="Enter content for the About Us page...">TradeConnect is a global B2B platform that connects buyers and sellers across international markets. Our mission is to simplify international trade by providing powerful tools for document management, store management, and business analytics.
+
+Founded in 2020, we've helped over 500 companies streamline their import/export operations and expand their global reach. Our platform offers comprehensive features designed specifically for international trade professionals, including automated document generation, task management, and contact organization.
+
+With TradeConnect, companies can focus on growing their business while we handle the complexities of international trade documentation and compliance.</textarea>
+                    <button class="btn-submit" onclick="saveContent('about')">Save Changes</button>
+                </div>
+            </div>
+            
+            <div class="content-section">
+                <h3>Contact Us Page</h3>
+                <div class="content-editor">
+                    <textarea id="contact-content" placeholder="Enter content for the Contact Us page...">Get in touch with our team for any questions or support needs.
+
+**Headquarters:**
+123 Trade Street
+New York, NY 10001
+United States
+
+**Phone:**
++1 (555) 123-4567
+
+**Email:**
+support@tradeconnect.com
+
+**Business Hours:**
+Monday - Friday: 9:00 AM - 6:00 PM EST
+
+**Support:**
+For technical support, please submit a ticket through your dashboard or email support@tradeconnect.com. Our team typically responds within 24 hours.
+
+**Sales Inquiries:**
+For partnership and sales opportunities, please contact sales@tradeconnect.com.</textarea>
+                    <button class="btn-submit" onclick="saveContent('contact')">Save Changes</button>
+                </div>
+            </div>
+            
+            <div class="content-section">
+                <h3>Homepage Banner Text</h3>
+                <div class="form-group">
+                    <label for="banner-heading">Main Heading</label>
+                    <input type="text" id="banner-heading" value="Connect Global Buyers & Sellers" style="margin-bottom: 1rem;">
+                </div>
+                <div class="form-group">
+                    <label for="banner-subheading">Subheading</label>
+                    <input type="text" id="banner-subheading" value="TradeConnect helps companies showcase their products and services to buyers worldwide while providing powerful tools to manage your business operations." style="margin-bottom: 1rem;">
+                </div>
+                <button class="btn-submit" onclick="saveBanner()">Save Banner Changes</button>
+            </div>
+        </div>
+        
+        <!-- Statistics Tab -->
+        <div id="statistics" class="tab-content">
+            <h2>Platform Statistics</h2>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Total Companies</div>
+                    <div class="stat-number">127</div>
+                    <div class="stat-label">+12 this month</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Active Companies</div>
+                    <div class="stat-number">103</div>
+                    <div class="stat-label">81% of total</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Documents Processed</div>
+                    <div class="stat-number">15,842</div>
+                    <div class="stat-label">Lifetime</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Revenue Generated</div>
+                    <div class="stat-number">$89,420</div>
+                    <div class="stat-label">Lifetime</div>
+                </div>
+            </div>
+            
+            <div class="content-section" style="margin-top: 2rem;">
+                <h3>Monthly Growth</h3>
+                <div style="height: 300px; background: #f8f9fa; display: flex; align-items: center; justify-content: center; margin: 2rem 0;">
+                    <p>In a real application, this would display charts and graphs using a library like Chart.js</p>
+                </div>
+                
+                <h3>Top Performing Companies</h3>
+                <table style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
+                    <thead>
+                        <tr style="background-color: #f8f9fa;">
+                            <th style="text-align: left; padding: 0.8rem; border-bottom: 2px solid #ddd;">Company</th>
+                            <th style="text-align: left; padding: 0.8rem; border-bottom: 2px solid #ddd;">Documents</th>
+                            <th style="text-align: left; padding: 0.8rem; border-bottom: 2px solid #ddd;">Revenue</th>
+                            <th style="text-align: left; padding: 0.8rem; border-bottom: 2px solid #ddd;">Tasks Completed</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="padding: 0.8rem; border-bottom: 1px solid #ddd;">Global Exporters Inc.</td>
+                            <td style="padding: 0.8rem; border-bottom: 1px solid #ddd;">342</td>
+                            <td style="padding: 0.8rem; border-bottom: 1px solid #ddd;">$28,500</td>
+                            <td style="padding: 0.8rem; border-bottom: 1px solid #ddd;">156</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0.8rem; border-bottom: 1px solid #ddd;">Premium Textiles Ltd.</td>
+                            <td style="padding: 0.8rem; border-bottom: 1px solid #ddd;">287</td>
+                            <td style="padding: 0.8rem; border-bottom: 1px solid #ddd;">$22,300</td>
+                            <td style="padding: 0.8rem; border-bottom: 1px solid #ddd;">132</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0.8rem; border-bottom: 1px solid #ddd;">AgriTrade Solutions</td>
+                            <td style="padding: 0.8rem; border-bottom: 1px solid #ddd;">256</td>
+                            <td style="padding: 0.8rem; border-bottom: 1px solid #ddd;">$18,900</td>
+                            <td style="padding: 0.8rem; border-bottom: 1px solid #ddd;">127</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Settings Tab -->
+        <div id="settings" class="tab-content">
+            <h2>Platform Settings</h2>
+            
+            <div class="form-container">
+                <h3 class="form-title">General Settings</h3>
+                <form id="settings-form">
+                    <div class="form-group">
+                        <label for="platform-name">Platform Name</label>
+                        <input type="text" id="platform-name" value="TradeConnect">
+                    </div>
+                    <div class="form-group">
+                        <label for="contact-email">Support Email</label>
+                        <input type="email" id="contact-email" value="support@tradeconnect.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="subscription-fee">Monthly Subscription Fee ($)</label>
+                        <input type="number" id="subscription-fee" value="99.99" min="0" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label for="trial-period">Free Trial Period (days)</label>
+                        <input type="number" id="trial-period" value="14" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="document-retention">Document Retention Period (days)</label>
+                        <input type="number" id="document-retention" value="365" min="30">
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn-submit">Save Settings</button>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="form-container" style="margin-top: 2rem;">
+                <h3 class="form-title">Maintenance Mode</h3>
+                <p>Enable maintenance mode to temporarily disable access for all users.</p>
+                <div style="display: flex; align-items: center; margin: 1.5rem 0;">
+                    <span style="margin-right: 1rem;">Maintenance Mode:</span>
+                    <label class="switch" style="position: relative; display: inline-block; width: 60px; height: 34px;">
+                        <input type="checkbox" id="maintenance-toggle">
+                        <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px;"></span>
+                        <span style="position: absolute; content: ''; height: 26px; width: 26px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%;"></span>
+                    </label>
+                    <span id="maintenance-status" style="margin-left: 1rem; font-weight: bold;">Disabled</span>
+                </div>
+                <div class="form-group">
+                    <label for="maintenance-message">Maintenance Message</label>
+                    <input type="text" id="maintenance-message" placeholder="We'll be back soon!" value="Scheduled maintenance in progress. We'll be back soon!">
+                </div>
+                <button class="btn-submit" onclick="saveMaintenanceSettings()">Save Maintenance Settings</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mock company data
+        const mockCompanies = [
+            {
+                id: 1,
+                name: "Global Exporters Inc.",
+                username: "company1",
+                contactPerson: "John Smith",
+                email: "john@global-exporters.com",
+                phone: "+1-555-123-4567",
+                status: "active",
+                joinDate: "2023-01-15",
+                lastLogin: "2023-06-20T10:30:00"
+            },
+            {
+                id: 2,
+                name: "Premium Textiles Ltd.",
+                username: "company2",
+                contactPerson: "Maria Garcia",
+                email: "maria@premium-textiles.com",
+                phone: "+1-555-987-6543",
+                status: "active",
+                joinDate: "2023-02-28",
+                lastLogin: "2023-06-19T15:45:00"
+            },
+            {
+                id: 3,
+                name: "AgriTrade Solutions",
+                username: "company3",
+                contactPerson: "Robert Johnson",
+                email: "robert@agritrade.com",
+                phone: "+1-555-456-7890",
+                status: "active",
+                joinDate: "2023-03-10",
+                lastLogin: "2023-06-15T09:20:00"
+            },
+            {
+                id: 4,
+                name: "Industrial Machinery Co.",
+                username: "company4",
+                contactPerson: "Lisa Wong",
+                email: "lisa@industrial-machinery.com",
+                phone: "+1-555-789-0123",
+                status: "frozen",
+                joinDate: "2023-01-22",
+                lastLogin: "2023-06-14T14:30:00"
+            },
+            {
+                id: 5,
+                name: "Oceanic Foods",
+                username: "company5",
+                contactPerson: "David Kim",
+                email: "david@oceanicfoods.com",
+                phone: "+1-555-234-5678",
+                status: "active",
+                joinDate: "2023-06-12",
+                lastLogin: "2023-06-12T11:15:00"
+            }
+        ];
+        
+        // Check if admin is logged in
+        document.addEventListener('DOMContentLoaded', function() {
+            if (localStorage.getItem('isAdminLoggedIn') !== 'true') {
+                window.location.href = 'admin-login.html';
+                return;
+            }
+            
+            // Render companies list
+            renderCompaniesList();
+            
+            // Sidebar navigation
+            const sidebarLinks = document.querySelectorAll('.sidebar-menu a');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            sidebarLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Remove active class from all links and tabs
+                    sidebarLinks.forEach(l => l.classList.remove('active'));
+                    tabContents.forEach(tc => tc.classList.remove('active'));
+                    
+                    // Add active class to clicked link
+                    this.classList.add('active');
+                    
+                    // Show corresponding tab
+                    const tabId = this.getAttribute('data-tab');
+                    document.getElementById(tabId).classList.add('active');
+                    
+                    // Update page title
+                    document.querySelector('.page-title').textContent = this.textContent + ' - Admin Dashboard';
+                });
+            });
+            
+            // Logout functionality
+            document.getElementById('logout-btn').addEventListener('click', function() {
+                localStorage.removeItem('isAdminLoggedIn');
+                window.location.href = 'index.html';
+            });
+            
+            // Add company form
+            document.getElementById('add-company-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const companyName = document.getElementById('new-company-name').value;
+                const username = document.getElementById('new-username').value;
+                const password = document.getElementById('new-password').value;
+                const contactPerson = document.getElementById('new-contact-person').value;
+                const email = document.getElementById('new-email').value;
+                const phone = document.getElementById('new-phone').value;
+                const status = document.getElementById('new-status').value;
+                
+                if (companyName && username && password) {
+                    // In a real app, this would save to the database
+                    const newCompany = {
+                        id: mockCompanies.length + 1,
+                        name: companyName,
+                        username: username,
+                        contactPerson: contactPerson,
+                        email: email,
+                        phone: phone,
+                        status: status,
+                        joinDate: new Date().toISOString().split('T')[0],
+                        lastLogin: null
+                    };
+                    
+                    mockCompanies.push(newCompany);
+                    renderCompaniesList();
+                    
+                    // Reset form
+                    this.reset();
+                    alert('Company account created successfully!');
+                    
+                    // Switch to companies tab
+                    sidebarLinks.forEach(l => l.classList.remove('active'));
+                    document.querySelector('[data-tab="companies"]').classList.add('active');
+                    tabContents.forEach(tc => tc.classList.remove('active'));
+                    document.getElementById('companies').classList.add('active');
+                    document.querySelector('.page-title').textContent = 'Manage Companies - Admin Dashboard';
+                }
+            });
+            
+            // Settings form
+            document.getElementById('settings-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert('Settings saved successfully!');
+            });
+            
+            // Maintenance toggle
+            const maintenanceToggle = document.getElementById('maintenance-toggle');
+            const maintenanceStatus = document.getElementById('maintenance-status');
+            
+            maintenanceToggle.addEventListener('change', function() {
+                if (this.checked) {
+                    maintenanceStatus.textContent = 'Enabled';
+                    this.nextElementSibling.style.backgroundColor = '#2ecc71';
+                } else {
+                    maintenanceStatus.textContent = 'Disabled';
+                    this.nextElementSibling.style.backgroundColor = '#ccc';
+                }
+            });
+            
+            // Initialize dashboard counts
+            const totalCompanies = mockCompanies.length;
+            const activeCompanies = mockCompanies.filter(c => c.status === 'active').length;
+            const frozenCompanies = mockCompanies.filter(c => c.status === 'frozen').length;
+            
+            document.getElementById('total-companies').textContent = totalCompanies;
+            document.getElementById('active-companies').textContent = activeCompanies;
+            document.getElementById('frozen-companies').textContent = frozenCompanies;
+        });
+        
+        // Render companies list
+        function renderCompaniesList() {
+            const container = document.getElementById('companies-list');
+            container.innerHTML = '';
+            
+            mockCompanies.forEach(company => {
+                const companyElement = document.createElement('div');
+                companyElement.className = 'company-item';
+                
+                const statusClass = company.status === 'active' ? 'status-active' : 'status-frozen';
+                const statusText = company.status === 'active' ? 'Active' : 'Frozen';
+                
+                const lastLogin = company.lastLogin ? new Date(company.lastLogin).toLocaleString() : 'Never';
+                const joinDate = new Date(company.joinDate).toLocaleDateString();
+                
+                companyElement.innerHTML = `
+                    <div class="company-header">
+                        <h3 class="company-name">${company.name}</h3>
+                        <span class="company-status ${statusClass}">${statusText}</span>
+                    </div>
+                    <div class="company-info">
+                        <p><span class="info-label">Username:</span> ${company.username}</p>
+                        <p><span class="info-label">Contact:</span> ${company.contactPerson || 'N/A'}</p>
+                        <p><span class="info-label">Email:</span> ${company.email || 'N/A'}</p>
+                        <p><span class="info-label">Phone:</span> ${company.phone || 'N/A'}</p>
+                        <p><span class="info-label">Joined:</span> ${joinDate}</p>
+                        <p><span class="info-label">Last Login:</span> ${lastLogin}</p>
+                    </div>
+                    <div class="company-actions">
+                        <button class="btn-small btn-edit" onclick="editCompany(${company.id})">Edit</button>
+                        <button class="btn-small btn-delete" onclick="deleteCompany(${company.id}, '${company.name}')">Delete</button>
+                        ${company.status === 'active' ? 
+                            `<button class="btn-small btn-freeze" onclick="toggleCompanyStatus(${company.id}, 'frozen')">Freeze</button>` : 
+                            `<button class="btn-small btn-activate" onclick="toggleCompanyStatus(${company.id}, 'active')">Activate</button>`}
+                        <button class="btn-small btn-reset" onclick="resetPassword(${company.id})">Reset Password</button>
+                    </div>
+                `;
+                
+                container.appendChild(companyElement);
+            });
+        }
+        
+        // Company management functions
+        function editCompany(companyId) {
+            const company = mockCompanies.find(c => c.id === companyId);
+            if (company) {
+                alert(`Editing ${company.name}. In a real application, this would open an edit form.`);
+            }
+        }
+        
+        function deleteCompany(companyId, companyName) {
+            if (confirm(`Are you sure you want to delete ${companyName}? This action cannot be undone.`)) {
+                const index = mockCompanies.findIndex(c => c.id === companyId);
+                if (index !== -1) {
+                    mockCompanies.splice(index, 1);
+                    renderCompaniesList();
+                    alert(`${companyName} has been deleted.`);
+                }
+            }
+        }
+        
+        function toggleCompanyStatus(companyId, newStatus) {
+            const company = mockCompanies.find(c => c.id === companyId);
+            if (company) {
+                company.status = newStatus;
+                renderCompaniesList();
+                alert(`${company.name} has been ${newStatus === 'active' ? 'activated' : 'frozen'}.`);
+            }
+        }
+        
+        function resetPassword(companyId) {
+            const company = mockCompanies.find(c => c.id === companyId);
+            if (company) {
+                const newPassword = prompt(`Enter new password for ${company.name}:`);
+                if (newPassword) {
+                    // In a real app, this would update the password in the database
+                    alert(`Password for ${company.name} has been reset successfully.`);
+                }
+            }
+        }
+        
+        // Content management functions
+        function saveContent(page) {
+            const content = page === 'about' ? 
+                document.getElementById('about-content').value : 
+                document.getElementById('contact-content').value;
+            alert(`${page === 'about' ? 'About Us' : 'Contact Us'} page content saved successfully!`);
+        }
+        
+        function saveBanner() {
+            const heading = document.getElementById('banner-heading').value;
+            const subheading = document.getElementById('banner-subheading').value;
+            alert('Homepage banner content saved successfully!');
+        }
+        
+        function saveMaintenanceSettings() {
+            const isMaintenance = document.getElementById('maintenance-toggle').checked;
+            const message = document.getElementById('maintenance-message').value;
+            alert(`Maintenance settings saved successfully! Maintenance mode is now ${isMaintenance ? 'enabled' : 'disabled'}.`);
+        }
+    </script>
+</body>
+</html>

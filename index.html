@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TradeConnect - Connect Buyers & Sellers</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        
+        header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 1.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        
+        nav a:hover {
+            background-color: #34495e;
+        }
+        
+        .hero {
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://via.placeholder.com/1200x400') center/cover;
+            color: white;
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+        
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto 2rem;
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: #3498db;
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        
+        .btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .companies-section {
+            padding: 3rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 2rem;
+            color: #2c3e50;
+        }
+        
+        .companies-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .company-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        
+        .company-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .company-img {
+            height: 180px;
+            background: #ecf0f1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #7f8c8d;
+            font-size: 1.2rem;
+        }
+        
+        .company-info {
+            padding: 1.5rem;
+        }
+        
+        .company-name {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+        }
+        
+        .company-desc {
+            color: #7f8c8d;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+        
+        .products-list {
+            margin-top: 1rem;
+        }
+        
+        .product-item {
+            background: #f8f9fa;
+            padding: 0.5rem;
+            margin-bottom: 0.5rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+        
+        footer {
+            background-color: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            margin: 1rem 0;
+        }
+        
+        .footer-links a {
+            color: white;
+            margin: 0 1rem;
+            text-decoration: none;
+        }
+        
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">TradeConnect</div>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="#companies">Companies</a>
+            <a href="company-login.html">Company Login</a>
+            <a href="admin-login.html">Admin</a>
+        </nav>
+    </header>
+    
+    <section class="hero">
+        <h1>Connect Global Buyers & Sellers</h1>
+        <p>TradeConnect helps companies showcase their products and services to buyers worldwide while providing powerful tools to manage your business operations.</p>
+        <a href="company-login.html" class="btn">Company Login</a>
+    </section>
+    
+    <section id="companies" class="companies-section">
+        <h2 class="section-title">Featured Companies & Products</h2>
+        <div class="companies-grid" id="companies-container">
+            <!-- Companies will be loaded here by JavaScript -->
+        </div>
+    </section>
+    
+    <footer>
+        <div class="footer-links">
+            <a href="#about">About Us</a>
+            <a href="#contact">Contact</a>
+            <a href="admin-login.html">Admin Login</a>
+        </div>
+        <p>&copy; 2023 TradeConnect. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Mock data for companies and products
+        const companies = [
+            {
+                id: 1,
+                name: "Global Exporters Inc.",
+                description: "Leading exporter of electronics and consumer goods with 15+ years of experience.",
+                products: ["Smartphones", "Laptops", "Tablets", "Accessories"]
+            },
+            {
+                id: 2,
+                name: "Premium Textiles Ltd.",
+                description: "Manufacturer and exporter of high-quality fabrics and garments.",
+                products: ["Cotton Fabrics", "Silk Scarves", "Wool Sweaters", "Custom Apparel"]
+            },
+            {
+                id: 3,
+                name: "AgriTrade Solutions",
+                description: "Specialized in agricultural products and food commodities for global markets.",
+                products: ["Coffee Beans", "Organic Spices", "Dried Fruits", "Grains"]
+            },
+            {
+                id: 4,
+                name: "Industrial Machinery Co.",
+                description: "Provider of heavy machinery and industrial equipment for construction and manufacturing.",
+                products: ["Excavators", "Cranes", "Generators", "Conveyor Systems"]
+            }
+        ];
+        
+        // Function to render companies on the homepage
+        function renderCompanies() {
+            const container = document.getElementById('companies-container');
+            
+            companies.forEach(company => {
+                const companyCard = document.createElement('div');
+                companyCard.className = 'company-card';
+                
+                let productsHTML = '';
+                company.products.forEach(product => {
+                    productsHTML += `<div class="product-item">${product}</div>`;
+                });
+                
+                companyCard.innerHTML = `
+                    <div class="company-img">Company Logo</div>
+                    <div class="company-info">
+                        <h3 class="company-name">${company.name}</h3>
+                        <p class="company-desc">${company.description}</p>
+                        <div class="products-list">
+                            <strong>Products:</strong>
+                            ${productsHTML}
+                        </div>
+                    </div>
+                `;
+                
+                container.appendChild(companyCard);
+            });
+        }
+        
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            renderCompanies();
+        });
+    </script>
+</body>
+</html>
